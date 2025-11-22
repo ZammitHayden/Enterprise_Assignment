@@ -1,0 +1,77 @@
+﻿@using Domain.Interfaces
+@model IEnumerable<IItemValidating>
+
+@{
+    var viewType = ViewBag.ViewType ?? "card";
+    var isCardView = viewType.ToString().ToLower() != "row";
+    var isApprovalPage = ViewBag.IsApprovalPage ?? false;
+}
+
+<div class="container">
+
+    <a class="nav-link" href="/Home/PendingApproval">Pending Approvals</a>
+
+    <!-- View Toggle -->
+    <div class="view-options mb-3">
+        <a href="?view=card" class="btn @(isCardView ? "btn-primary" : "btn-outline-primary")">Card View</a>
+        <a href="?view=row" class="btn @(!isCardView ? "btn-primary" : "btn-outline-primary")">Row View</a>
+    </div>
+
+    @if (isApprovalPage)
+    {
+        <h2>Pending Approvals</h2>
+        <form method="post" asp-action="ApproveItems">
+            <button type="submit" class="btn btn-success mb-3">Approve Selected</button>
+        </form>
+    }
+
+    <div class="@(isCardView ? "card-container" : "row-container")">
+        @foreach (var item in Model)
+        {
+            if (isApprovalPage)
+            {
+                <div class="approval-item">
+                    <input type="checkbox" name="selectedItems" value="@item.GetType().Name-@(item is Restaurant r ? r.Id.ToString() : (item as MenuItem)?.Id.ToString())" />
+                    @await Html.PartialAsync(item.GetCardPartial(), item)
+                </div>
+            }
+            else
+            {
+                @await Html.PartialAsync(item.GetCardPartial(), item)
+            }
+        }
+    </div>
+</div>
+
+<style>
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.row-container .card {
+    flex-direction: row;
+}
+
+.row-container .card-body {
+    flex: 1;
+}
+
+.approval-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.approval-item input[type="checkbox"] {
+    margin-top: 1rem;
+}
+</style>

@@ -1,0 +1,15 @@
+﻿@model Restaurant
+
+<div class="card @(Model.Status == "Pending" ? "border-warning" : "border-primary")">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text">
+            <!--<strong>Description:</strong> ModelDescription<br />-->
+            <strong>Owner:</strong> @Model.OwnerEmailAddress<br />
+            <!--<strong>Address:</strong> ModelAddress<br />-->
+            <!--<strong>Phone:</strong> ModelPhone<br />-->
+            <strong>Status:</strong> <span class="badge @(Model.Status == "Pending" ? "bg-warning" : "bg-success")">@Model.Status</span>
+        </p>
+        <small class="text-muted">Restaurant</small>
+    </div>
+</div>

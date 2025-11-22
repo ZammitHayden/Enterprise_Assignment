@@ -1,0 +1,14 @@
+﻿@model MenuItem
+
+<div class="card @(Model.Status == "Pending" ? "border-warning" : "border-primary")">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">
+            <!-- <strong>Description:</strong> ModelDescription<br /> -->
+            <!-- <strong>Price:</strong> ModelCurrency ModelPrice<br /> -->
+            <strong>Restaurant:</strong> @Model.Restaurant?.Name<br />
+            <strong>Status:</strong> <span class="badge @(Model.Status == "Pending" ? "bg-warning" : "bg-success")">@Model.Status</span>
+        </p>
+        <small class="text-muted">Menu Item</small>
+    </div>
+</div>
