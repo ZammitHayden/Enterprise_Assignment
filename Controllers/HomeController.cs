@@ -64,10 +64,10 @@ namespace Enterprise_Assignment.Controllers
             {
                 Id = 1,
                 Name = "Trattoria Luca",
-                //Description = "Pasta & grill with fresh daily specials",
+                Description = "Pasta & grill with fresh daily specials",
                 OwnerEmailAddress = "luca.owner@example.com",
-                // Address = "123 Harbor Road, Valletta",
-                //Phone = "+356 1234 5678",
+                Address = "123 Harbor Road, Valletta",
+                Phone = "+356 1234 5678",
                 Status = "Approved"
             });
 
@@ -75,10 +75,10 @@ namespace Enterprise_Assignment.Controllers
             {
                 Id = 2,
                 Name = "Sushi Wave",
-                // Description = "Classic nigiri and creative rolls",
+                Description = "Classic nigiri and creative rolls",
                 OwnerEmailAddress = "hana.owner@example.com",
-                // Address = "45 Marina Street, Sliema",
-                //Phone = "+356 9876 5432",
+                Address = "45 Marina Street, Sliema",
+                Phone = "+356 9876 5432",
                 Status = "Pending"
             });
 
@@ -90,7 +90,7 @@ namespace Enterprise_Assignment.Controllers
                 Id = Guid.NewGuid(),
                 Title = "Tagliatelle al Ragù",
                 Price = 11.50f,
-                //Currency = "EUR",
+                Currency = "EUR",
                 Restaurant = restaurant1,
                 RestaurantFK = 1,
                 Status = "Approved"
@@ -101,7 +101,7 @@ namespace Enterprise_Assignment.Controllers
                 Id = Guid.NewGuid(),
                 Title = "Ribeye 300g",
                 Price = 24.00f,
-                //Currency = "EUR",
+                Currency = "EUR",
                 Restaurant = restaurant1,
                 RestaurantFK = 1,
                 Status = "Pending"

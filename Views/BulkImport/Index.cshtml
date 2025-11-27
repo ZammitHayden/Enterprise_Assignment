@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Bulk Import";
+}
+
+<h2>Bulk Import Data</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<form asp-action="BulkImport" method="post">
+    <div class="form-group">
+        <label for="jsonData">JSON Data:</label>
+        <textarea class="form-control" id="jsonData" name="jsonData" rows="10"
+                  placeholder='Paste JSON here'></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Preview Import</button>
+</form>
+
+<div class="mt-4">
+    <h4>Sample JSON Data:</h4>
+    <pre>
+[
+  {
+    "Type": "Restaurant",
+    "Name": "La Piazza",
+    "OwnerEmailAddress": "owner@lapiazza.com"
+  },
+  {
+    "Type": "MenuItem", 
+    "Title": "Margherita Pizza",
+    "Price": 12.50,
+    "RestaurantFK": 1
+  }
+]
+    </pre>
+</div>

@@ -1,0 +1,80 @@
+﻿@model List<Domain.Interfaces.IItemValidating>
+
+@{
+    ViewData["Title"] = "Import Preview";
+}
+
+<h2>Import Preview</h2>
+
+@if (Model?.Any() == true)
+{
+    <form asp-action="ProcessImport" method="post">
+        <div class="alert alert-info">
+            <strong>Preview:</strong> The following @Model.Count items will be imported. Review before proceeding.
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Name/Title</th>
+                    <th>Details</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var item = Model[i];
+                    <tr>
+                        <td>@item.GetType().Name</td>
+                        <td>
+                            @if (item is Enterprise_Assignment.Models.Restaurant restaurant)
+                            {
+                                @restaurant.Name
+                                <input type="hidden" name="[@i].Type" value="Restaurant" />
+                                <input type="hidden" name="[@i].Id" value="0" />
+                                <input type="hidden" name="[@i].Name" value="@restaurant.Name" />
+                                <input type="hidden" name="[@i].OwnerEmailAddress" value="@restaurant.OwnerEmailAddress" />
+                                <input type="hidden" name="[@i].Status" value="@restaurant.Status" />
+                            }
+                            else if (item is Enterprise_Assignment.Models.MenuItem menuItem)
+                            {
+                                @menuItem.Title
+                                <input type="hidden" name="[@i].Type" value="MenuItem" />
+                                <input type="hidden" name="[@i].Id" value="@menuItem.Id" />
+                                <input type="hidden" name="[@i].Title" value="@menuItem.Title" />
+                                <input type="hidden" name="[@i].Price" value="@menuItem.Price" />
+                                <input type="hidden" name="[@i].RestaurantFK" value="@menuItem.RestaurantFK" />
+                                <input type="hidden" name="[@i].Status" value="@menuItem.Status" />
+                            }
+                        </td>
+                        <td>
+                            @if (item is Enterprise_Assignment.Models.Restaurant r)
+                            {
+                                <text>Owner: @r.OwnerEmailAddress</text>
+                            }
+                            else if (item is Enterprise_Assignment.Models.MenuItem m)
+                            {
+                                <text>Price: €@m.Price, Restaurant: @m.RestaurantFK</text>
+                            }
+                        </td>
+                        <td>@item.GetType().GetProperty("Status")?.GetValue(item)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Confirm Import</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">
+        No items to import.
+    </div>
+    <a asp-action="Index" class="btn btn-primary">Back to Import</a>
+}
