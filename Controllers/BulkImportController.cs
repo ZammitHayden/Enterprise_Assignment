@@ -18,7 +18,9 @@ namespace Enterprise_Assignment.Controllers
         }
 
         [HttpPost]
-        public IActionResult BulkImport(string jsonData)
+        public IActionResult BulkImport(
+            string jsonData,
+            [FromKeyedServices("InMemory")] IItemsRepository inMemoryRepository)
         {
             if (string.IsNullOrEmpty(jsonData))
             {
@@ -43,6 +45,9 @@ namespace Enterprise_Assignment.Controllers
                     }
                 }
 
+                var sessionId = HttpContext.Session.Id;
+                inMemoryRepository.SaveItems(sessionId, items);
+
                 return View("Preview", items);
             }
             catch (System.Exception ex)
@@ -53,12 +58,33 @@ namespace Enterprise_Assignment.Controllers
         }
 
         [HttpPost]
-        public IActionResult ProcessImport(List<IItemValidating> items)
+        public IActionResult ProcessImport(
+            [FromKeyedServices("InMemory")] IItemsRepository inMemoryRepository,
+            [FromKeyedServices("Database")] IItemsRepository dbRepository)
         {
-            // This will be implemented in AA4.3 to save to database
-            // For now, just redirect back with success message
-            TempData["Message"] = $"Successfully processed {items?.Count ?? 0} items for import.";
-            return RedirectToAction("Index");
+            try
+            {
+                var sessionId = HttpContext.Session.Id;
+                var items = inMemoryRepository.GetItems(sessionId);
+
+                if (items == null || items.Count == 0)
+                {
+                    TempData["Error"] = "No items found to import. Please upload JSON data first.";
+                    return RedirectToAction("Index");
+                }
+
+                dbRepository.SaveItems(sessionId, items);
+
+                inMemoryRepository.ClearItems(sessionId);
+
+                TempData["Message"] = $"Successfully processed {items.Count} items for import.";
+                return RedirectToAction("Index");
+            }
+            catch (System.Exception ex)
+            {
+                TempData["Error"] = $"Error during import: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
     }
 }

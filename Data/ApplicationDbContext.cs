@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Enterprise_Assignment.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Enterprise_Assignment.Data
@@ -9,5 +10,8 @@ namespace Enterprise_Assignment.Data
             : base(options)
         {
         }
+
+        public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
     }
 }

@@ -17,7 +17,6 @@ namespace Enterprise_Assignment.Controllers
                 using JsonDocument document = JsonDocument.Parse(json);
                 JsonElement root = document.RootElement;
 
-                // Handle single object or array
                 if (root.ValueKind == JsonValueKind.Array)
                 {
                     foreach (JsonElement element in root.EnumerateArray())

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36717.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enterprise_Assignment", "Enterprise_Assignment.csproj", "{E08DC370-82FE-4C8C-B024-9F587836DF07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data Access", "..\Data Access\Data Access.csproj", "{99DB5C68-6AC7-45CB-84C3-43BBCC0DC826}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "..\Domain\Domain.csproj", "{C9081C7D-ABA3-43BB-AE35-170D59B84889}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{E08DC370-82FE-4C8C-B024-9F587836DF07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E08DC370-82FE-4C8C-B024-9F587836DF07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E08DC370-82FE-4C8C-B024-9F587836DF07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99DB5C68-6AC7-45CB-84C3-43BBCC0DC826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99DB5C68-6AC7-45CB-84C3-43BBCC0DC826}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99DB5C68-6AC7-45CB-84C3-43BBCC0DC826}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99DB5C68-6AC7-45CB-84C3-43BBCC0DC826}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9081C7D-ABA3-43BB-AE35-170D59B84889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9081C7D-ABA3-43BB-AE35-170D59B84889}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9081C7D-ABA3-43BB-AE35-170D59B84889}.Release|Any CPU.ActiveCfg = Release|Any CPU
