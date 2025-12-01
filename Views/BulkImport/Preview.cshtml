@@ -8,6 +8,37 @@
 
 @if (Model?.Any() == true)
 {
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Image Template</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Download Image Template</h6>
+                    <p class="text-muted small">
+                        Download the ZIP template containing folders for each item. Replace the default images
+                        while keeping the folder structure, then upload the modified ZIP.
+                    </p>
+                    <a href="@Url.Action("DownloadTemplate")" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download Template ZIP
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <h6>Upload Modified Images</h6>
+                    <form asp-action="CommitImport" method="post" enctype="multipart/form-data">
+                        <div class="mb-2">
+                            <input type="file" name="zipFile" class="form-control" accept=".zip" required />
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-upload"></i> Commit Import with Images
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <form asp-action="ProcessImport" method="post">
         <div class="alert alert-info">
             <strong>Preview:</strong> The following @Model.Count items will be imported. Review before proceeding.
@@ -37,6 +68,7 @@
                                 <input type="hidden" name="[@i].Name" value="@restaurant.Name" />
                                 <input type="hidden" name="[@i].OwnerEmailAddress" value="@restaurant.OwnerEmailAddress" />
                                 <input type="hidden" name="[@i].Status" value="@restaurant.Status" />
+                                <input type="hidden" name="[@i].ImageUrl" value="@restaurant.ImageUrl" />
                             }
                             else if (item is Enterprise_Assignment.Models.MenuItem menuItem)
                             {
@@ -47,6 +79,7 @@
                                 <input type="hidden" name="[@i].Price" value="@menuItem.Price" />
                                 <input type="hidden" name="[@i].RestaurantFK" value="@menuItem.RestaurantFK" />
                                 <input type="hidden" name="[@i].Status" value="@menuItem.Status" />
+                                <input type="hidden" name="[@i].ImageUrl" value="@menuItem.ImageUrl" />
                             }
                         </td>
                         <td>
@@ -66,7 +99,7 @@
         </table>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-success">Confirm Import</button>
+            <button type="submit" class="btn btn-success">Confirm Import (Without Custom Images)</button>
             <a asp-action="Index" class="btn btn-secondary">Cancel</a>
         </div>
     </form>

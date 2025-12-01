@@ -21,37 +21,120 @@ namespace Enterprise_Assignment.Data.Repositories
             throw new NotImplementedException("This method is not supported for database repository in this context");
         }
 
-        public void SaveItems(string sessionId, List<IItemValidating> items)
+        public List<IItemValidating> GetApprovedRestaurants()
         {
-            foreach (var item in items)
-            {
-                if (item is Restaurant restaurant)
-                {
-                    var existingRestaurant = _context.Restaurants
-                        .FirstOrDefault(r => r.Id == restaurant.Id);
+            var restaurants = _context.Restaurants
+                .Where(r => r.Status == "Approved")
+                .ToList();
 
-                    if (existingRestaurant != null)
+            return restaurants.Cast<IItemValidating>().ToList();
+        }
+
+        public List<MenuItem> GetApprovedMenuItems(int restaurantId)
+        {
+            return _context.MenuItems
+                .Where(m => m.RestaurantFK == restaurantId && m.Status == "Approved")
+                .ToList();
+        }
+
+        public List<IItemValidating> GetApprovedItems()
+        {
+            var restaurants = _context.Restaurants
+                .Where(r => r.Status == "Approved")
+                .Cast<IItemValidating>()
+                .ToList();
+
+            var menuItems = _context.MenuItems
+                .Where(m => m.Status == "Approved")
+                .Cast<IItemValidating>()
+                .ToList();
+
+            return restaurants.Concat(menuItems).ToList();
+        }
+
+        public List<IItemValidating> GetPendingItems()
+        {
+            var pendingRestaurants = _context.Restaurants
+                .Where(r => r.Status == "Pending")
+                .Cast<IItemValidating>()
+                .ToList();
+
+            var pendingMenuItems = _context.MenuItems
+                .Where(m => m.Status == "Pending")
+                .Cast<IItemValidating>()
+                .ToList();
+
+            return pendingRestaurants.Concat(pendingMenuItems).ToList();
+        }
+
+        public Restaurant GetRestaurantById(int restaurantId)
+        {
+            return _context.Restaurants
+                .FirstOrDefault(r => r.Id == restaurantId);
+        }
+
+        public void ApproveItem(string itemId)
+        {
+            var parts = itemId.Split('-');
+            if (parts.Length == 2)
+            {
+                var type = parts[0];
+                var id = parts[1];
+
+                if (type == "Restaurant" && int.TryParse(id, out int restaurantId))
+                {
+                    var restaurant = _context.Restaurants.FirstOrDefault(r => r.Id == restaurantId);
+                    if (restaurant != null)
                     {
-                        _context.Entry(existingRestaurant).CurrentValues.SetValues(restaurant);
-                    }
-                    else
-                    {
-                        _context.Restaurants.Add(restaurant);
+                        restaurant.Status = "Approved";
+                        _context.SaveChanges();
                     }
                 }
-                else if (item is MenuItem menuItem)
+                else if (type == "MenuItem" && Guid.TryParse(id, out Guid menuItemId))
                 {
-                    var existingMenuItem = _context.MenuItems
-                        .FirstOrDefault(m => m.Id == menuItem.Id);
+                    var menuItem = _context.MenuItems.FirstOrDefault(m => m.Id == menuItemId);
+                    if (menuItem != null)
+                    {
+                        menuItem.Status = "Approved";
+                        _context.SaveChanges();
+                    }
+                }
+            }
+        }
 
-                    if (existingMenuItem != null)
-                    {
-                        _context.Entry(existingMenuItem).CurrentValues.SetValues(menuItem);
-                    }
-                    else
-                    {
-                        _context.MenuItems.Add(menuItem);
-                    }
+        public void SaveItems(string sessionId, List<IItemValidating> items)
+        {
+            foreach (var item in items.OfType<Restaurant>())
+            {
+                var restaurant = item;
+                var existingRestaurant = _context.Restaurants
+                    .FirstOrDefault(r => r.Id == restaurant.Id);
+
+                if (existingRestaurant != null)
+                {
+                    _context.Entry(existingRestaurant).CurrentValues.SetValues(restaurant);
+                }
+                else
+                {
+                    _context.Restaurants.Add(restaurant);
+                }
+            }
+
+            _context.SaveChanges();
+
+            foreach (var item in items.OfType<MenuItem>())
+            {
+                var menuItem = item;
+                var existingMenuItem = _context.MenuItems
+                    .FirstOrDefault(m => m.Id == menuItem.Id);
+
+                if (existingMenuItem != null)
+                {
+                    _context.Entry(existingMenuItem).CurrentValues.SetValues(menuItem);
+                }
+                else
+                {
+                    _context.MenuItems.Add(menuItem);
                 }
             }
 

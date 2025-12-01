@@ -4,8 +4,7 @@
     <div class="card-body">
         <h5 class="card-title">@Model.Title</h5>
         <p class="card-text">
-            <!-- <strong>Description:</strong> ModelDescription<br /> -->
-            <!-- <strong>Price:</strong> ModelCurrency ModelPrice<br /> -->
+            <strong>Price:</strong> @Model.Currency<br /> 
             <strong>Restaurant:</strong> @Model.Restaurant?.Name<br />
             <strong>Status:</strong> <span class="badge @(Model.Status == "Pending" ? "bg-warning" : "bg-success")">@Model.Status</span>
         </p>

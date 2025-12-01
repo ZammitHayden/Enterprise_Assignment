@@ -1,5 +1,7 @@
 using Domain.Interfaces;
+using Enterprise_Assignment.Controllers;
 using Enterprise_Assignment.Data;
+using Enterprise_Assignment.Data.Repositories; 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +23,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddKeyedScoped<IItemsRepository, Enterprise_Assignment.Data.Repositories.ItemsInMemoryRepository>("InMemory");
 builder.Services.AddKeyedScoped<IItemsRepository, Enterprise_Assignment.Data.Repositories.ItemsDbRepository>("Database");
 
+builder.Services.AddScoped<ItemsDbRepository>();
+builder.Services.AddScoped<ImportItemFactory>();
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
@@ -35,7 +40,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -44,10 +48,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSession(); 
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
