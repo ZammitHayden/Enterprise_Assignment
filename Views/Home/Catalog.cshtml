@@ -1,4 +1,4 @@
-﻿@using Domain.Interfaces
+﻿﻿@using Domain.Interfaces
 @model IEnumerable<IItemValidating>
 
 @{
@@ -19,27 +19,30 @@
     @if (isApprovalPage)
     {
         <h2>Pending Approvals</h2>
-        <form method="post" asp-action="ApproveItems">
+        <form method="post" asp-controller="Home" asp-action="ApproveItems">
             <button type="submit" class="btn btn-success mb-3">Approve Selected</button>
+
+            <div class="@(isCardView ? "card-container" : "row-container")">
+                @foreach (var item in Model)
+                {
+                    <div class="approval-item">
+                        <input type="checkbox" name="selectedItems"
+                               value="@item.GetType().Name-@(item is Restaurant r ? r.Id.ToString() : (item as MenuItem)?.Id.ToString())" />
+                        @await Html.PartialAsync(item.GetCardPartial(), item)
+                    </div>
+                }
+            </div>
         </form>
     }
-
-    <div class="@(isCardView ? "card-container" : "row-container")">
-        @foreach (var item in Model)
-        {
-            if (isApprovalPage)
-            {
-                <div class="approval-item">
-                    <input type="checkbox" name="selectedItems" value="@item.GetType().Name-@(item is Restaurant r ? r.Id.ToString() : (item as MenuItem)?.Id.ToString())" />
-                    @await Html.PartialAsync(item.GetCardPartial(), item)
-                </div>
-            }
-            else
+    else
+    {
+        <div class="@(isCardView ? "card-container" : "row-container")">
+            @foreach (var item in Model)
             {
                 @await Html.PartialAsync(item.GetCardPartial(), item)
             }
-        }
-    </div>
+        </div>
+    }
 </div>
 
 <style>

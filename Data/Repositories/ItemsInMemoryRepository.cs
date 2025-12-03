@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain.Interfaces;
-using Enterprise_Assignment.Models;
+﻿using Domain.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Enterprise_Assignment.Data.Repositories

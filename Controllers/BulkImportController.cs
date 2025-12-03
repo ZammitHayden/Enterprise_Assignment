@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using Domain.Interfaces;
 using Enterprise_Assignment.Models;
 using System.IO.Compression;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
+using Enterprise_Assignment.Services;
 
 namespace Enterprise_Assignment.Controllers
 {

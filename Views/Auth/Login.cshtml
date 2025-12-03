@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Login</h3>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+
+                    <form method="post" asp-controller="Auth" asp-action="Login">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <a href="/Auth/Register" class="btn btn-link">Register Instead</a>
+                    </form>
+
+                    <hr>
+                    <p class="text-muted small">
+                        <strong>Site Admin:</strong> admin@enterprise.com / Password: Admin@123<br>
+                        <strong>Restaurant Owner:</strong> Any email works
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

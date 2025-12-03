@@ -4,7 +4,7 @@ using System.Text.Json;
 using Domain.Interfaces;
 using Enterprise_Assignment.Models;
 
-namespace Enterprise_Assignment.Controllers
+namespace Enterprise_Assignment.Services
 {
     public class ImportItemFactory
     {
@@ -50,12 +50,24 @@ namespace Enterprise_Assignment.Controllers
 
             string type = typeElement.GetString();
 
-            return type?.ToLower() switch
+            var options = new JsonSerializerOptions
             {
-                "restaurant" => JsonSerializer.Deserialize<Restaurant>(element.GetRawText()),
-                "menuitem" => JsonSerializer.Deserialize<MenuItem>(element.GetRawText()),
+                PropertyNameCaseInsensitive = true
+            };
+
+            IItemValidating item = type?.ToLower() switch
+            {
+                "restaurant" => JsonSerializer.Deserialize<Restaurant>(element.GetRawText(), options),
+                "menuitem" => JsonSerializer.Deserialize<MenuItem>(element.GetRawText(), options),
                 _ => throw new ArgumentException($"Unknown type: {type}")
             };
+
+            if (item is MenuItem menuItem && menuItem.Id == Guid.Empty)
+            {
+                menuItem.Id = Guid.NewGuid();
+            }
+
+            return item;
         }
     }
 }

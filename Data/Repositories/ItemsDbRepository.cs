@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Enterprise_Assignment.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,13 +64,37 @@ namespace Enterprise_Assignment.Data.Repositories
             return pendingRestaurants.Concat(pendingMenuItems).ToList();
         }
 
-        public Restaurant GetRestaurantById(int restaurantId)
+        public List<MenuItem> GetPendingMenuItems()
         {
-            return _context.Restaurants
-                .FirstOrDefault(r => r.Id == restaurantId);
+            return _context.MenuItems
+                .Where(m => m.Status == "Pending")
+                .Include(m => m.Restaurant)
+                .ToList();
         }
 
-        public void ApproveItem(string itemId)
+        public List<Restaurant> GetPendingRestaurants()
+        {
+            return _context.Restaurants
+                .Where(r => r.Status == "Pending")
+                .ToList();
+        }
+
+        public List<Restaurant> GetRestaurantsByOwner(string ownerEmail)
+        {
+            return _context.Restaurants
+                .Where(r => r.OwnerEmailAddress == ownerEmail)
+                .ToList();
+        }
+
+        public List<MenuItem> GetMenuItemsByRestaurantOwner(string ownerEmail)
+        {
+            return _context.MenuItems
+                .Include(m => m.Restaurant)
+                .Where(m => m.Restaurant.OwnerEmailAddress == ownerEmail && m.Status == "Pending")
+                .ToList();
+        }
+
+        public IItemValidating GetItemByIdString(string itemId)
         {
             var parts = itemId.Split('-');
             if (parts.Length == 2)
@@ -83,30 +104,70 @@ namespace Enterprise_Assignment.Data.Repositories
 
                 if (type == "Restaurant" && int.TryParse(id, out int restaurantId))
                 {
+                    return GetRestaurantById(restaurantId);
+                }
+                else if (type == "MenuItem" && Guid.TryParse(id, out Guid menuItemId))
+                {
+                    return GetMenuItemById(menuItemId);
+                }
+            }
+            return null;
+        }
+
+        public MenuItem GetMenuItemById(Guid menuItemId)
+        {
+            return _context.MenuItems
+                .Include(m => m.Restaurant)
+                .FirstOrDefault(m => m.Id == menuItemId);
+        }
+        public Restaurant GetRestaurantById(int restaurantId)
+        {
+            return _context.Restaurants
+                .FirstOrDefault(r => r.Id == restaurantId);
+        }
+
+        public void Approve(string itemId)
+        {
+            var parts = itemId.Split('-');
+            if (parts.Length >= 2)
+            {
+                var type = parts[0];
+                if (type == "Restaurant" && int.TryParse(parts[1], out int restaurantId))
+                {
                     var restaurant = _context.Restaurants.FirstOrDefault(r => r.Id == restaurantId);
                     if (restaurant != null)
                     {
                         restaurant.Status = "Approved";
-                        _context.SaveChanges();
                     }
                 }
-                else if (type == "MenuItem" && Guid.TryParse(id, out Guid menuItemId))
+                else if (type == "MenuItem")
                 {
-                    var menuItem = _context.MenuItems.FirstOrDefault(m => m.Id == menuItemId);
-                    if (menuItem != null)
+                    if (parts.Length >= 5)
                     {
-                        menuItem.Status = "Approved";
-                        _context.SaveChanges();
+                        string guidString = $"{parts[1]}-{parts[2]}-{parts[3]}-{parts[4]}-{parts[5]}";
+                        if (Guid.TryParse(guidString, out Guid menuItemId))
+                        {
+                            var menuItem = _context.MenuItems.FirstOrDefault(m => m.Id == menuItemId);
+                            if (menuItem != null)
+                            {
+                                menuItem.Status = "Approved";
+                            }
+                        }
                     }
                 }
             }
+            _context.SaveChanges();
         }
 
         public void SaveItems(string sessionId, List<IItemValidating> items)
         {
+            var siteAdminEmail = "admin@enterprise.com";
+
             foreach (var item in items.OfType<Restaurant>())
             {
                 var restaurant = item;
+                restaurant.SiteAdminEmail = siteAdminEmail;
+
                 var existingRestaurant = _context.Restaurants
                     .FirstOrDefault(r => r.Id == restaurant.Id);
 
@@ -140,7 +201,6 @@ namespace Enterprise_Assignment.Data.Repositories
 
             _context.SaveChanges();
         }
-
         public void ClearItems(string sessionId)
         {
             throw new NotImplementedException("This method is not supported for database repository");

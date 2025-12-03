@@ -1,7 +1,8 @@
 using Domain.Interfaces;
-using Enterprise_Assignment.Controllers;
 using Enterprise_Assignment.Data;
-using Enterprise_Assignment.Data.Repositories; 
+using Enterprise_Assignment.Data.Repositories;
+using Enterprise_Assignment.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,10 +20,18 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login";
+        options.AccessDeniedPath = "/Auth/AccessDenied";
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddMemoryCache();
 builder.Services.AddKeyedScoped<IItemsRepository, Enterprise_Assignment.Data.Repositories.ItemsInMemoryRepository>("InMemory");
 builder.Services.AddKeyedScoped<IItemsRepository, Enterprise_Assignment.Data.Repositories.ItemsDbRepository>("Database");
 
+builder.Services.AddScoped<AuthorizeApprovalAttribute>();
 builder.Services.AddScoped<ItemsDbRepository>();
 builder.Services.AddScoped<ImportItemFactory>();
 
