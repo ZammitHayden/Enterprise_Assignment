@@ -120,36 +120,6 @@ namespace Enterprise_Assignment.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult ProcessImport(
-            [FromKeyedServices("InMemory")] IItemsRepository inMemoryRepository,
-            [FromKeyedServices("Database")] IItemsRepository dbRepository)
-        {
-            try
-            {
-                var sessionId = HttpContext.Session.Id;
-                var items = inMemoryRepository.GetItems(sessionId);
-
-                if (items == null || items.Count == 0)
-                {
-                    TempData["Error"] = "No items found to import. Please upload JSON data first.";
-                    return RedirectToAction("Index");
-                }
-
-                dbRepository.SaveItems(sessionId, items);
-                inMemoryRepository.ClearItems(sessionId);
-                HttpContext.Session.Remove("TemplateZip");
-
-                TempData["Message"] = $"Successfully processed {items.Count} items for import.";
-                return RedirectToAction("Index");
-            }
-            catch (System.Exception ex)
-            {
-                TempData["Error"] = $"Error during import: {ex.Message}";
-                return RedirectToAction("Index");
-            }
-        }
-
         private byte[] GenerateImageTemplateZip(List<IItemValidating> items)
         {
             using var memoryStream = new MemoryStream();

@@ -5,9 +5,59 @@
 }
 
 <h2>Import Preview</h2>
-
 @if (Model?.Any() == true)
 {
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Preview of Items to Import</h5>
+            <p class="mb-0 text-muted small">Total Items: @Model.Count</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                @if (item is Restaurant)
+                                {
+                                    <span class="badge bg-primary">Restaurant</span>
+                                }
+                                else if (item is MenuItem)
+                                {
+                                    <span class="badge bg-success">Menu Item</span>
+                                }
+                            </div>
+                            <div class="card-body">
+                                @if (item is Restaurant restaurant)
+                                {
+                                    <h5 class="card-title">@restaurant.Name</h5>
+                                    <p class="card-text">@restaurant.Description</p>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small><strong>Phone:</strong> @restaurant.Phone</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <small><strong>Address:</strong> @restaurant.Address</small>
+                                        </div>
+                                    </div>
+                                }
+                                else if (item is MenuItem menuItem)
+                                {
+                                    <h5 class="card-title">@menuItem.Title</h5>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small><strong>Price:</strong> @menuItem.Price.ToString("C")</small>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Image Template</h5>
@@ -38,71 +88,6 @@
             </div>
         </div>
     </div>
-
-    <form asp-action="ProcessImport" method="post">
-        <div class="alert alert-info">
-            <strong>Preview:</strong> The following @Model.Count items will be imported. Review before proceeding.
-        </div>
-
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Name/Title</th>
-                    <th>Details</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < Model.Count; i++)
-                {
-                    var item = Model[i];
-                    <tr>
-                        <td>@item.GetType().Name</td>
-                        <td>
-                            @if (item is Enterprise_Assignment.Models.Restaurant restaurant)
-                            {
-                                @restaurant.Name
-                                <input type="hidden" name="[@i].Type" value="Restaurant" />
-                                <input type="hidden" name="[@i].Id" value="0" />
-                                <input type="hidden" name="[@i].Name" value="@restaurant.Name" />
-                                <input type="hidden" name="[@i].OwnerEmailAddress" value="@restaurant.OwnerEmailAddress" />
-                                <input type="hidden" name="[@i].Status" value="@restaurant.Status" />
-                                <input type="hidden" name="[@i].ImageUrl" value="@restaurant.ImageUrl" />
-                            }
-                            else if (item is Enterprise_Assignment.Models.MenuItem menuItem)
-                            {
-                                @menuItem.Title
-                                <input type="hidden" name="[@i].Type" value="MenuItem" />
-                                <input type="hidden" name="[@i].Id" value="@menuItem.Id" />
-                                <input type="hidden" name="[@i].Title" value="@menuItem.Title" />
-                                <input type="hidden" name="[@i].Price" value="@menuItem.Price" />
-                                <input type="hidden" name="[@i].RestaurantFK" value="@menuItem.RestaurantFK" />
-                                <input type="hidden" name="[@i].Status" value="@menuItem.Status" />
-                                <input type="hidden" name="[@i].ImageUrl" value="@menuItem.ImageUrl" />
-                            }
-                        </td>
-                        <td>
-                            @if (item is Enterprise_Assignment.Models.Restaurant r)
-                            {
-                                <text>Owner: @r.OwnerEmailAddress</text>
-                            }
-                            else if (item is Enterprise_Assignment.Models.MenuItem m)
-                            {
-                                <text>Price: €@m.Price, Restaurant: @m.RestaurantFK</text>
-                            }
-                        </td>
-                        <td>@item.GetType().GetProperty("Status")?.GetValue(item)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">Confirm Import (Without Custom Images)</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
 }
 else
 {
